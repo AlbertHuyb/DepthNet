@@ -11,18 +11,28 @@ class depthNet(nn.Module):
         self.conv2 = nn.Conv2d(3,13,3) # 5 -> 3
         self.fc1 = nn.Linear(13*3*3,64)
         self.fc2 = nn.Linear(64,1)
+        self.bn1 = nn.BatchNorm2d(3)
 
     def forward(self,x):
         # print(x.shape)
-        x = self.maxpool1(F.relu(self.conv1(x)))
+        x = F.leaky_relu(self.conv1(x))
+        x = self.bn1(x)
+        x = self.maxpool1(x)
         # print(x.shape)
-        x = F.relu(self.conv2(x))
+        # print(x)
+        x = F.leaky_relu(self.conv2(x))
         # print(x.shape)
 
         x = x.view(-1, 13 * 3 * 3)
+        # print(x.shape)
+        # print(x)
         # x = x.view(-1,13*13)
         x = F.relu(self.fc1(x))
+        # print(x.shape)
+        # print(x)
         x = self.fc2(x)
+        # print(x.shape)
+        # print(x)
         
         # x = self.maxpool2(x)
         # print(x)
